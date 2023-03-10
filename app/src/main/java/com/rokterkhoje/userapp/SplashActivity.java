@@ -16,6 +16,9 @@ public class SplashActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isFirstTime = preferences.getBoolean("isFirstTime", true);
+       // SharedPreferences preferences2 = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isSkipSignUp = preferences.getBoolean("isSkipSignUp", false);
+
 
         if (isFirstTime) {
 
@@ -39,7 +42,25 @@ public class SplashActivity extends AppCompatActivity {
                 }
             };thread.start();
 
-        }else {
+        }else if (isSkipSignUp){
+
+            Thread thread =new Thread(){
+                public void run(){
+                    try {
+
+                        sleep(1500);
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    finally {
+                        Intent intent=new Intent(SplashActivity.this , MainActivity.class);
+                        startActivity(intent);
+                    }
+                }
+            };thread.start();
+        }
+        else {
             Thread thread =new Thread(){
                 public void run(){
                     try {
