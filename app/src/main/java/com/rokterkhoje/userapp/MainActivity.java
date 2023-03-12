@@ -8,16 +8,18 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 public class MainActivity extends AppCompatActivity {
-LinearLayout postrequest;
+    //global variables
+LinearLayout postrequest,statusfeed;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getSupportActionBar().hide();
+
 
 
         //initializing variables
         postrequest=findViewById(R.id.postrequest);
+        statusfeed=findViewById(R.id.statusfeed);
 
         //send to post reques page
         postrequest.setOnClickListener(new View.OnClickListener() {
@@ -27,6 +29,13 @@ LinearLayout postrequest;
             }
         });
 
+        //send to status feed
+        statusfeed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,StatusfeedActivity.class));
+            }
+        });
 
     }
 }

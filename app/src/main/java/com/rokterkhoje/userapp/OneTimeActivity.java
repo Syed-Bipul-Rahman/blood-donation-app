@@ -13,7 +13,7 @@ ImageView img1, img2;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_one_time);
-        getSupportActionBar().hide();
+
 
 
         img1=findViewById(R.id.imgOne);
