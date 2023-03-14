@@ -1,6 +1,7 @@
 package com.rokterkhoje.userapp;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -9,6 +10,15 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.rokterkhoje.userapp.Api.ApiClient;
+import com.rokterkhoje.userapp.Api.ApiInterface;
+import com.rokterkhoje.userapp.Response.AddRequestResponse;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class PostBloodRequestActivity extends AppCompatActivity {
     //global variables
@@ -22,12 +32,16 @@ public class PostBloodRequestActivity extends AppCompatActivity {
     //arrayadapter
     private ArrayAdapter<CharSequence> bloodspineradapter, locationspinneradapter;
 
+    //api interface object
+    ApiInterface apiInterface;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_blood_request);
 
         //initialization of variables
+
         //spinner
         spinnerbloodgroup = findViewById(R.id.spinnerbloodgroup);
         spinnerlocation = findViewById(R.id.spinnerlocation);
@@ -38,6 +52,9 @@ public class PostBloodRequestActivity extends AppCompatActivity {
         adddetails = findViewById(R.id.adddetails);
         //buttons
         postrequest = findViewById(R.id.postbloodrequest_btn);
+//api interface initialization
+        Retrofit retrofit = ApiClient.getclient();
+        apiInterface = retrofit.create(ApiInterface.class);
 
 
 //for blood group spinner
@@ -87,8 +104,9 @@ public class PostBloodRequestActivity extends AppCompatActivity {
                     adddetails.setError("Fill out this filed");
 
 
-                }else{
-//after all validation call api
+                } else {
+                    //after all validation call api
+                    callapi(bloodgroup, hospitalareatxt, location, phonenotxt, adddetailstxt);
 
                 }
 
@@ -98,4 +116,43 @@ public class PostBloodRequestActivity extends AppCompatActivity {
 
 
     }
+
+
+    private void callapi(String blood_group, String hospital_area, String location, String phone, String details) {
+        apiInterface.addRequest(blood_group, hospital_area, location, phone, details).enqueue(new Callback<AddRequestResponse>() {
+            @Override
+            public void onResponse(Call<AddRequestResponse> call, Response<AddRequestResponse> response) {
+                try {
+
+                    if (response.body().getStatus().equals("1")) {
+                        Toast.makeText(PostBloodRequestActivity.this, "Request Added Successfully", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(PostBloodRequestActivity.this, response.body().getMassage().toString(), Toast.LENGTH_SHORT).show();
+
+                    }
+
+
+                } catch (Exception e) {
+
+                    Log.e("exp", e.getLocalizedMessage());
+                    Toast.makeText(PostBloodRequestActivity.this, "Response Failure,Exception! ", Toast.LENGTH_LONG).show();
+
+
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Call<AddRequestResponse> call, Throwable t) {
+
+                Log.e("failer", t.getLocalizedMessage());
+
+                Toast.makeText(PostBloodRequestActivity.this, "Failed to post Request!", Toast.LENGTH_LONG).show();
+
+
+            }
+        });
+    }
+
 }
